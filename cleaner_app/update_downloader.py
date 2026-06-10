@@ -51,7 +51,8 @@ class UpdateDownloader:
         update_info: UpdateInfo,
         progress_callback: Callable[[int, int], None] | None = None,
     ) -> tuple[bool, str, Path | None]:
-        dest = Path(tempfile.gettempdir()) / f"YanjinCleaner_update_{update_info.version}.exe"
+        ext = ".zip" if update_info.download_url.lower().endswith(".zip") else ".exe"
+        dest = Path(tempfile.gettempdir()) / f"YanjinCleaner_update_{update_info.version}{ext}"
 
         expected_hash = ""
         if update_info.checksum_url:

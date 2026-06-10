@@ -82,11 +82,11 @@ class UpdateChecker:
         for asset in data.get("assets", []):
             name = asset.get("name", "")
             url = asset.get("browser_download_url", "")
-            if name.lower().endswith(".exe") and not name.lower().endswith(".sha256"):
+            if name.lower().endswith(".sha256"):
+                checksum_url = url
+            elif name.lower().endswith((".exe", ".zip")):
                 download_url = url
                 size_bytes = asset.get("size", 0)
-            elif name.lower().endswith(".sha256"):
-                checksum_url = url
 
         if not download_url:
             return None
