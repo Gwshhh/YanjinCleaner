@@ -1190,6 +1190,7 @@ class MainWindow(QMainWindow):
 
     def show_about_dialog(self) -> None:
         dialog = AboutDialog(self)
+        dialog.check_update.connect(dialog.accept)
         dialog.check_update.connect(self._manual_check_update)
         dialog.exec()
 
