@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m unittest discover -v)",
+      "Bash(python -m PyInstaller --noconfirm --clean --windowed --uac-admin --name YanjinCleaner main.py)",
+      "Bash(cd *)"
+    ]
+  }
+}
