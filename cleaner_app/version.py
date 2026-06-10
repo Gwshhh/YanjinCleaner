@@ -5,7 +5,7 @@ __version_info__ = (1, 0, 0)
 
 
 def parse_version(version_string: str) -> tuple[int, int, int]:
-    cleaned = version_string.lstrip("vV").strip()
+    cleaned = version_string.strip().lstrip("vV")
     parts = cleaned.split(".")
     if len(parts) != 3:
         raise ValueError(f"Invalid version format: {version_string}")
