@@ -482,6 +482,7 @@ class MainWindow(QMainWindow):
         self.update_checker = UpdateChecker()
         self.update_check_thread: UpdateCheckThread | None = None
         self.pending_update = None
+        self._manual_update_check = False
 
         self.nav = QListWidget()
         self.nav.currentTextChanged.connect(self.on_nav_changed)
@@ -1157,13 +1158,21 @@ class MainWindow(QMainWindow):
     def _on_update_check_result(self, info) -> None:
         self.settings.last_update_check = datetime.now(timezone.utc).isoformat()
         self.settings.save()
+        manual = self._manual_update_check
+        self._manual_update_check = False
 
         if info is None:
+            if manual:
+                QMessageBox.information(self, "检查更新", "当前已是最新版本。")
             return
         if self.settings.skipped_version == info.version:
+            if manual:
+                QMessageBox.information(self, "检查更新", f"新版本 {info.version} 之前已被忽略，可在设置中重置。")
             return
         self.pending_update = info
         self.update_bar.show_update(info.version)
+        if manual:
+            self.show_update_dialog()
 
     def show_update_dialog(self) -> None:
         if self.pending_update is None:
@@ -1185,6 +1194,7 @@ class MainWindow(QMainWindow):
         dialog.exec()
 
     def _manual_check_update(self) -> None:
+        self._manual_update_check = True
         self.update_checker._cached = None
         self.update_checker._cache_time = None
         self._run_update_check()
