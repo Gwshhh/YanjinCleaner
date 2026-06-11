@@ -12,7 +12,7 @@ from PySide6.QtCore import (
     QThread,
     Signal,
 )
-from PySide6.QtGui import QBrush, QColor, QFont, QFontMetrics, QPainter
+from PySide6.QtGui import QBrush, QColor, QFont, QFontMetrics, QIcon, QPainter
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QApplication,
@@ -65,6 +65,7 @@ from .version import __version__
 
 import csv
 import json
+import sys
 from datetime import datetime, timezone
 
 
@@ -468,6 +469,10 @@ class MainWindow(QMainWindow):
         self.resize(1320, 820)
         self.setMinimumSize(1120, 720)
 
+        icon_path = self._get_icon_path()
+        if icon_path and icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
+
         self.settings = UserSettings.load()
         self.safety_guard = SafetyGuard(settings=self.settings)
         self.scanner = CleanupScanner(self.safety_guard, self.settings)
@@ -652,6 +657,8 @@ class MainWindow(QMainWindow):
         title_box.addWidget(title)
         title_box.addWidget(subtitle)
         layout.addLayout(title_box, stretch=1)
+        self.status_label.setMaximumWidth(260)
+        self.status_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         layout.addWidget(self.status_label)
         layout.addWidget(self.about_button)
         layout.addWidget(self.settings_button)
@@ -1254,6 +1261,15 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "导出成功", f"已导出 {len(self.items)} 项到 {path}")
         except Exception as e:
             QMessageBox.warning(self, "导出失败", f"导出失败：{e}")
+
+    def _get_icon_path(self) -> Path | None:
+        """获取图标文件路径，支持开发和打包后的环境"""
+        if getattr(sys, 'frozen', False):
+            base = Path(sys._MEIPASS)
+        else:
+            base = Path(__file__).parent.parent
+        icon_path = base / 'icon.ico'
+        return icon_path if icon_path.exists() else None
 
 
 def item_summary(item: CleanupItem) -> str:
