@@ -12,6 +12,7 @@ from PySide6.QtCore import (
     QThread,
     Signal,
 )
+from PySide6.QtGui import QBrush, QColor, QFont, QFontMetrics, QIcon, QPainter, QScreen
 from PySide6.QtGui import QBrush, QColor, QFont, QFontMetrics, QIcon, QPainter
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -468,6 +469,13 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("严谨清理 - Windows 安全清理与软件残留检查中心")
         self.resize(1320, 820)
         self.setMinimumSize(1120, 720)
+
+        # 窗口居中显示
+        screen = QApplication.primaryScreen().geometry()
+        window_rect = self.frameGeometry()
+        center_point = screen.center()
+        window_rect.moveCenter(center_point)
+        self.move(window_rect.topLeft())
 
         icon_path = self._get_icon_path()
         if icon_path and icon_path.exists():
