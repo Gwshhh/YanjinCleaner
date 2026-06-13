@@ -26,6 +26,7 @@ def main() -> int:
 
     window = MainWindow()
     window.show()
+    window.center_on_screen()
     return app.exec()
 
 
